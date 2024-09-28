@@ -64,8 +64,7 @@ type StructConfig struct {
 
 ## Go Module Usage
 
-You can also use `go-codegen` as a Go module by importing the `Templater` type. Inject transformers using the following
-signature:
+You can also use `go-codegen` as a Go module by importing the `Templater` type. Inject transformers using the following signature:
 
 ```go
 type TransformerFn func(*TemplateContext) error
