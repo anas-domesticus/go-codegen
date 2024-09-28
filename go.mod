@@ -1,4 +1,4 @@
-module go-codegen
+module github.com/anas-domesticus/go-codegen
 
 go 1.23.1
 
