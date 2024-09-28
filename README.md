@@ -70,6 +70,38 @@ You can also use `go-codegen` as a Go module by importing the `Templater` type. 
 type TransformerFn func(*TemplateContext) error
 ```
 
+Example:
+
+```go
+package main
+
+import (
+	"fmt"
+	codegen "github.com/anas-domesticus/go-codegen/pkg"
+	"os"
+)
+
+func main() {
+	templater := codegen.NewTemplater([]codegen.Config{{
+		GoPath:       "src/example/",
+		TemplatePath: "example.go.tpl",
+		Name:         "example-template",
+		OutputPath:   "output_%s.go",
+	},
+	})
+	transformer := func(ctx *codegen.TemplateContext) error {
+		ctx.StructName = "OverwrittenStructName"
+		return nil
+	}
+	templater.AddTransformer(transformer)
+	err := templater.GenerateFiles()
+	if err != nil {
+		fmt.Printf("Error running templater: %s\n", err)
+		os.Exit(1)
+	}
+}
+```
+
 ## Struct Configuration
 
 Structs can be customized using struct tags and comments as shown below:
