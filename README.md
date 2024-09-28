@@ -107,11 +107,10 @@ TemplateContext{
             Comment: "",
         },
     },
-        Comments: []string{},
-        Config: StructConfig{
-        Values: map[string]string{"exclude": "true", "foo": "bar"},
-        Flags:  []string{"some-flag"},
-    },
+    Comments: []string{},
+    Config: StructConfig{
+    Values: map[string]string{"exclude": "true", "foo": "bar"},
+    Flags:  []string{"some-flag"},
 }
 ```
 
