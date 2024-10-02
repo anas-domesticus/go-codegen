@@ -12,7 +12,7 @@ func parseTags(tagString string) []map[string]string {
 		kv := strings.SplitN(part, ":", 2)
 		if len(kv) == 2 {
 			// Remove surrounding quotes from the value
-			key := kv[0]
+			key := removeQuotesAndBackticks(kv[0])
 			value := strings.Trim(kv[1], `"`)
 			tags = append(tags, map[string]string{key: removeQuotesAndBackticks(value)})
 		}

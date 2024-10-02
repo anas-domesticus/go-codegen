@@ -8,7 +8,7 @@ type RemoveFieldsTransformer struct {
 func (t *RemoveFieldsTransformer) Transform(c *TemplateContext) error {
 	var newFields []Field
 	for i := range c.Fields {
-		if !t.contains(t.Fields, c.Fields[i].Name) {
+		if !t.contains(t.Fields, c.Fields[i].SourceName) {
 			newFields = append(newFields, c.Fields[i])
 		}
 	}

@@ -1,10 +1,12 @@
 package pkg
 
 type Field struct {
-	Name    string
-	Type    string
-	Tags    []map[string]string
-	Comment string
+	SourceName string
+	DestName   string
+	SourceType string
+	DestType   string
+	Tags       []map[string]string
+	Comment    string
 }
 
 type TemplateContext struct {

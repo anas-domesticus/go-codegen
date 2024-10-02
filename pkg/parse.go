@@ -96,10 +96,12 @@ func parseGoFileOrModule(path string, cfg *Config) ([]TemplateContext, error) {
 							fieldComment = field.Doc.Text()
 						}
 						newField := Field{
-							Name:    name.Name,
-							Type:    fieldType,
-							Tags:    parseTags(fieldTag),
-							Comment: fieldComment,
+							SourceName: name.Name,
+							DestName:   name.Name,
+							SourceType: fieldType,
+							DestType:   fieldType,
+							Tags:       parseTags(fieldTag),
+							Comment:    fieldComment,
 						}
 						// Checking for exclusion tag on field
 						for i := range newField.Tags {

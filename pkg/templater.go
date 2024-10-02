@@ -49,9 +49,16 @@ func (t *Templater) GenerateFiles() error {
 			fmt.Printf("Error parsing file: %s\n", err)
 			return err
 		}
+
+		// Field removal transformer
 		if cfg.RemoveFields.Enable {
 			t.AddTransformer("remove-fields", cfg.RemoveFields.Transform)
 		}
+
+		// Transformer for struct tags to update types
+		newTypeTrans := FieldTypeAndNameTransformer{}
+		t.AddTransformer("type-name-type", newTypeTrans.Transform)
+
 		tmpl, err := template.ParseFiles(cfg.TemplatePath)
 		if err != nil {
 			panic(err)
