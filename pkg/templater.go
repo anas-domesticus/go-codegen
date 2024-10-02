@@ -8,10 +8,10 @@ import (
 
 type Templater struct {
 	configs      []Config
-	Transformers []TransformerFn
+	Transformers map[string]TransformerFn
 }
 
-type TransformerFn func(*TemplateContext) error
+type TransformerFn func(ctx *TemplateContext) error
 
 func NewTemplaterFromPath(path string) (*Templater, error) {
 	cfgs, err := loadYAMLConfigs(path)
@@ -27,8 +27,19 @@ func NewTemplater(configs []Config) *Templater {
 	}
 }
 
-func (t *Templater) AddTransformer(fn TransformerFn) {
-	t.Transformers = append(t.Transformers, fn)
+func (t *Templater) AddTransformer(name string, fn TransformerFn) {
+	if t.Transformers == nil {
+		t.Transformers = make(map[string]TransformerFn)
+	}
+	t.Transformers[name] = fn
+}
+
+func (t *Templater) RunTransformers() {
+	for i := range t.configs {
+		if t.configs[i].RemoveFields.Enable {
+
+		}
+	}
 }
 
 func (t *Templater) GenerateFiles() error {
@@ -37,6 +48,9 @@ func (t *Templater) GenerateFiles() error {
 		if err != nil {
 			fmt.Printf("Error parsing file: %s\n", err)
 			return err
+		}
+		if cfg.RemoveFields.Enable {
+			t.AddTransformer("remove-fields", cfg.RemoveFields.Transform)
 		}
 		tmpl, err := template.ParseFiles(cfg.TemplatePath)
 		if err != nil {

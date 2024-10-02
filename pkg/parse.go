@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 )
 
@@ -84,7 +85,7 @@ func parseGoFileOrModule(path string, cfg *Config) ([]TemplateContext, error) {
 				var fields []Field
 				for _, field := range structType.Fields.List {
 					for _, name := range field.Names {
-						fieldType := strings.TrimSpace(field.Type.(*ast.Ident).Name)
+						fieldType := ExtractFieldName(field.Type)
 						fieldTag := ""
 						if field.Tag != nil {
 							fieldTag = field.Tag.Value
@@ -124,4 +125,33 @@ func parseGoFileOrModule(path string, cfg *Config) ([]TemplateContext, error) {
 	}
 
 	return contexts, nil
+}
+
+// ExtractFieldName extracts the field name from an ast.Expr using reflection
+func ExtractFieldName(expr ast.Expr) string {
+	switch v := expr.(type) {
+	case *ast.Ident:
+		return v.Name
+	case *ast.SelectorExpr:
+		pkgName := ExtractFieldName(v.X)
+		return pkgName + "." + ExtractFieldName(v.Sel)
+	case *ast.StarExpr:
+		return "*" + ExtractFieldName(v.X)
+	case *ast.ArrayType:
+		return ExtractFieldName(v.Elt)
+	case *ast.MapType:
+		return "map[" + ExtractFieldName(v.Key) + "]" + ExtractFieldName(v.Value)
+	// Add other cases for different ast.Expr types as needed
+	default:
+		rv := reflect.ValueOf(expr)
+		if rv.Kind() == reflect.Ptr {
+			rv = rv.Elem()
+		}
+		if rv.Kind() == reflect.Struct {
+			if nameField := rv.FieldByName("Name"); nameField.IsValid() && nameField.Kind() == reflect.String {
+				return nameField.String()
+			}
+		}
+	}
+	return ""
 }

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"ast-test/pkg"
 	"flag"
 	"fmt"
+	"github.com/anas-domesticus/go-codegen/pkg"
 	"os"
 )
 

@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	GoPath       string `yaml:"go_path"`
-	TemplatePath string `yaml:"template_path"`
-	Name         string `yaml:"name"`
-	OutputPath   string `yaml:"output_path"`
+	GoPath       string                  `yaml:"go_path"`
+	TemplatePath string                  `yaml:"template_path"`
+	Name         string                  `yaml:"name"`
+	OutputPath   string                  `yaml:"output_path"`
+	RemoveFields RemoveFieldsTransformer `yaml:"remove_fields"`
 }
 
 func loadYAMLConfigs(filePath string) ([]Config, error) {
