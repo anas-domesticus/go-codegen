@@ -10,7 +10,7 @@ func (t *FieldTypeAndNameTransformer) Transform(ctx *TemplateContext) error {
 		}
 		val, ok = t.hasTag("codegen-new-name", ctx.Fields[i].Tags)
 		if ok {
-			ctx.Fields[i].DestName = val
+			ctx.Fields[i].DestName = Name(val)
 		}
 	}
 	return nil

@@ -96,8 +96,9 @@ func parseGoFileOrModule(path string, cfg *Config) ([]TemplateContext, error) {
 							fieldComment = field.Doc.Text()
 						}
 						newField := Field{
-							SourceName: name.Name,
-							DestName:   name.Name,
+							SourceName: Name(name.Name),
+							DestName:   Name(name.Name),
+							Counter:    len(fields),
 							SourceType: fieldType,
 							DestType:   fieldType,
 							Tags:       parseTags(fieldTag),
@@ -117,7 +118,7 @@ func parseGoFileOrModule(path string, cfg *Config) ([]TemplateContext, error) {
 				contexts = append(contexts, TemplateContext{
 					TemplateName: cfg.Name,
 					SourceFile:   filePath,
-					StructName:   typeSpec.Name.Name,
+					StructName:   Name(typeSpec.Name.Name),
 					Fields:       fields,
 					Comments:     comments,
 					Config:       structConfig,
