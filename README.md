@@ -31,9 +31,15 @@ go_path: src/test.go
 template_path: /path/to/template
 name: foo
 output_path: generated_bar_%s.go
+remove_fields:
+  enable: true
+  fields:
+    - FieldToRemove
 ```
 
 Each template is run once per struct found in the source file, with the struct name interpolated into `%s` in the output file name. `go_path` can be a single file or a directory.
+
+A `remove_fields` section will remove any fields with names specified in the array.
 
 ## Template Data
 
@@ -41,10 +47,12 @@ The data available to the templates is as follows:
 
 ```go
 type Field struct {
-    Name    string
-    Type    string
-    Tags    []map[string]string
-    Comment string
+    SourceName string
+    DestName   string
+    SourceType string
+    DestType   string
+    Tags       []map[string]string
+    Comment    string
 }
 
 type TemplateContext struct {
@@ -107,14 +115,28 @@ func main() {
 Structs can be customized using struct tags and comments as shown below:
 
 - including `exclude=true` will result in the struct being skipped
+- The struct field tags help customize the output by modifying field names and types in the generated code.
 
 ```go
 //@codegen exclude=true foo=bar some-flag
 type ExampleStruct struct {
     Field1 string `foo:"bar"`
-    Field2 int
+    Field2 int `codegen-new-type:"float64" codegen-new-name:"Field3"`
 }
 ```
+
+## Explanation
+
+1. **Struct-Level Tags:**
+    - `// @codegen exclude=true foo=bar some-flag`: These tags placed in a comment above the struct definition provide metadata for the entire struct. They can include:
+        - `exclude=true`: Skips the struct during code generation.
+        - `foo=bar`: Custom key-value pairs that can be used in templates.
+        - `some-flag`: Flags that can be used in templates.
+
+2. **Field-Level Tags:**
+    - `foo:"bar"`: Custom tag specific to your application, which can be processed by the code generator.
+    - `codegen-new-type:"float64"`: Indicates that the type of this field should be changed to `float64` in the generated code.
+    - `codegen-new-name:"Field3"`: Indicates that the field should be renamed to `Field3` in the generated code.
 
 ## Example
 
@@ -127,16 +149,20 @@ TemplateContext{
     StructName: "ExampleStruct",
     Fields: []Field{
         {
-            Name:    "Field1",
-            Type:    "string",
-            Tags:    []map[string]string{{"foo": "bar"}},
-            Comment: "",
+            SourceName: "Field1",
+            DestName:   "Field1", // defaults to the source name
+            SourceType: "string",
+            DestType:   "string", // defaults to the source type
+            Tags:       []map[string]string{{"foo": "bar"}},
+            Comment:    "",
         },
         {
-            Name:    "Field2",
-            Type:    "int",
-            Tags:    nil,
-            Comment: "",
+            SourceName: "Field2",
+            DestName:   "Field3", // renamed with struct tag
+            SourceType: "int",
+            DestType:   "float64", // overridden with struct tag
+            Tags:       nil,
+            Comment:    "",
         },
     },
     Comments: []string{},
