@@ -141,7 +141,7 @@ func ExtractFieldName(expr ast.Expr) string {
 	case *ast.StarExpr:
 		return "*" + ExtractFieldName(v.X)
 	case *ast.ArrayType:
-		return ExtractFieldName(v.Elt)
+		return "[]" + ExtractFieldName(v.Elt)
 	case *ast.MapType:
 		return "map[" + ExtractFieldName(v.Key) + "]" + ExtractFieldName(v.Value)
 	// Add other cases for different ast.Expr types as needed
